@@ -5,6 +5,7 @@
 1. Match scheduling
 2. Stream Team organisation
 3. Score reporting
+4. Logging
 
 ### Stretch Goals
 
@@ -18,6 +19,10 @@
 
 - Bot command prefix should be...?
     - For now it is `!s`
+
+## TODO Notes
+
+- Make default values for Globals / make Globals value persistent so I don't have to set admin perms every time
 
 ## Features
 
