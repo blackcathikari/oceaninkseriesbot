@@ -23,6 +23,10 @@
 ## TODO Notes
 
 - Make default values for Globals / make Globals value persistent so I don't have to set admin perms every time
+- sendMsg should be global?
+- helpMsg should be global?
+    - default second arg to first if not supplied?
+- Make decision on whether roles and such stored in data should be stored as tags, ids, or both
 
 ## Features
 

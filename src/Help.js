@@ -11,6 +11,21 @@ const managementBranches = {
             },
             check: { text: 'Check which role has admin permissions for the bot.' }
         }
+    },
+    teams: {
+        text: 'Add and remove team roles.',
+        branches: {
+            add: {
+                text: 'Add one or more team roles to the list. Note: must be valid roles.',
+                usage: '@team-1 @team-2'
+            },
+            remove: {
+                text: 'Remove one or more team roles from the list. Note: must be valid roles.',
+                usage: '@team-1 @team-2'
+            },
+            removeall: { text: 'Clears the team roles list entirely. Use carefully.' },
+            check: { text: 'Check which roles are in the team roles list.', }
+        }
     }
 };
 
@@ -25,33 +40,32 @@ const helpData = {
 };
 
 const generateHelpText = (args) => {
-    const parseLeaf = (name, leaf) => {
-        const usage = () => '\nUsage: `!s ' + args.join(' ') + ` ${name} ` + leaf.usage + '`';
+    const parseLeaf = (name, leaf, pathLength) => {
+        const usage = () => '\nUsage: `!s ' + args.slice(0, args.length-pathLength).join(' ') + ` ${name} ` + leaf.usage + '`';
         return leaf.hasOwnProperty('usage') ? leaf.text + usage() : leaf.text;
     };
 
     const isLeaf = (obj) => !obj.hasOwnProperty('branches');
 
     const parseNonLeaf = (block) => {
-        // TODO
-        // const keys = Obj.keys(block);
+        // TODO: surely there's more to this?
         return block.text;
     };
 
-    const parseBlock = (block) => {
+    const parseBlock = (block, pathLength) => {
         const generateLine = (name, text) => '\n- **' + name + ':** ' + text;
         const keys = Obj.keys(block);
         const descriptions = Arr.map(keys, (key) => {
             const child = block[key];
-            return isLeaf(child) ? generateLine(key, parseLeaf(key, child)) : generateLine(key, parseNonLeaf(child));
+            return isLeaf(child) ? generateLine(key, parseLeaf(key, child, pathLength)) : generateLine(key, parseNonLeaf(child));
         });
         return descriptions.join('');
     };
 
     const traverse = (obj, path) => {
-        // No path, so return top-level help
-        if (path.length === 0) {
-            return obj.text + ' Options:' + parseBlock(obj.branches);
+        // No path or we've hit the edge of the tree, so return wherever we are
+        if (!path.length > 0 || isLeaf(obj)) {
+            return isLeaf(obj) ? parseLeaf('', obj, path.length) : obj.text + ' Options:' + parseBlock(obj.branches, path.length);
         }
 
         // Path is incorrect - return possibilities
