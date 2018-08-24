@@ -1,0 +1,16 @@
+{
+  "name": "oceaninkseriesbot",
+  "version": "0.0.1",
+  "description": "Discord bot by CalamarCat for the Oceanink Series",
+  "main": "./src/seriesbot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ephox/katamari": "^2.2.6",
+    "discord.js": "^11.2.1",
+    "esm": "^3.0.80"
+  }
+}
