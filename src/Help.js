@@ -30,7 +30,7 @@ const managementBranches = {
 };
 
 const helpData = {
-    text: 'A bot designed for the Oceanink Series.',
+    text: 'A bot designed for the Oceanink Series. Use `!s help list` for a full list of all commands, or `!s help <command>` for details about each command.\n',
     branches: {
         manage: {
             text: 'Commands for managing the bot. Only useable by the server owner and specified admins.',
@@ -80,8 +80,29 @@ const generateHelpText = (args) => {
     return traverse(helpData, args);
 };
 
+const generateFullList = () => {
+    const traverse = (obj, prefix) => {
+        if (obj.hasOwnProperty('branches')) {
+            const keys = Obj.keys(obj.branches);
+            return Arr.map(keys, (key) => {
+                const newPrefix = prefix.concat([key]); 
+                return traverse(obj.branches[key], newPrefix);
+            }).join('\n');
+        }
+
+        return '- `' + prefix.join(' ') + '`: ' + obj.text;
+    };
+
+    return traverse(helpData, ['!s']);
+};
+
 const getHelpText = (args) => {
-    const text = generateHelpText(args);
+    let text = '';
+    if (args[0] === 'list') {
+        text = generateFullList();
+    } else {
+        text = generateHelpText(args);
+    }
     const embed = new RichEmbed()
         .setTitle('Oceanink Series Bot Help')
         .setColor(0x003399)
