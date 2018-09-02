@@ -1,8 +1,8 @@
 {
   "name": "oceaninkseriesbot",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Discord bot by CalamarCat for the Oceanink Series",
-  "main": "./src/seriesbot.js",
+  "main": "./build/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,6 +11,7 @@
   "dependencies": {
     "@ephox/katamari": "^2.2.6",
     "discord.js": "^11.2.1",
-    "esm": "^3.0.80"
+    "esm": "^3.0.80",
+    "typescript": "^3.0.3"
   }
 }

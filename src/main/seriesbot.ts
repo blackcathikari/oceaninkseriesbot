@@ -1,9 +1,10 @@
 /*
- * Beta Oceanink Series bot. 
+ * Beta Oceanink Series bot.
  * Version: 0.1
  * Invite link: https://discordapp.com/oauth2/authorize?client_id=482458671838789633&scope=bot
 */
 
+// @ts-ignore
 import { Client } from 'discord.js';
 import Help from './Help';
 import Management from './Management';
@@ -27,10 +28,10 @@ client.on('message', (message) => {
             case 'help':
                 message.channel.send(Help.getHelpText(args.slice(1)));
                 break;
-            case 'manage': 
+            case 'manage':
                 Management.manage(message, args.slice(1));
                 break;
-            default: 
+            default:
                 fallbackMessage(message);
         }
     }

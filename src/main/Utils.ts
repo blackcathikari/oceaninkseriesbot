@@ -1,3 +1,4 @@
+// @ts-ignore
 import { Option } from '@ephox/katamari';
 
 const isRoleTag = (tag) => {

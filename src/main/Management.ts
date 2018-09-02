@@ -3,8 +3,9 @@
     Various functions for managing the bot
 */
 
+// @ts-ignore
 import { Fun, Arr } from '@ephox/katamari';
-import Globals from './data/Globals.js';
+import Globals from '../data/Globals.js';
 import Utils from './Utils.js';
 
 const sendMsg = (msg, text) => msg.channel.send(text);
@@ -32,7 +33,7 @@ const adminManagement = (msg, args) => {
             sendMsg(msg, 'Admin role is now ' + args[1]);
             return;
         }
-        
+
         helpMsg(msg, 'admin set');
     };
 
@@ -70,7 +71,7 @@ const teamManagement = (msg, args) => {
     const addTeamRoles = () => {
         // Get names of roles that were added, and report them back as successes
         // Keep any args that aren't team roles, and report those back as failures
-        
+
         const newRoles = args.slice(1);
         if (newRoles.length === 0) {
             helpMsg(msg, 'teams add');
@@ -90,7 +91,7 @@ const teamManagement = (msg, args) => {
             return true;
         });
     };
-    
+
     const removeTeamRoles = () => {
         const rolesToRemove = args.slice(1);
         if (rolesToRemove.length === 0) {
@@ -103,7 +104,7 @@ const teamManagement = (msg, args) => {
         const wasRemoved = Arr.map(rolesToRemove, (role) => removeTeamRole(teamRoles, role));
         sendMsg(msg, passFailMessage(rolesToRemove, wasRemoved, 'Removed team role', 'Invalid team role'));
     };
-    
+
     const removeAllTeamRoles = () => {
         // PREREQ: Confirm
         // TODO
@@ -126,7 +127,7 @@ const teamManagement = (msg, args) => {
     }
 };
 
-const divManagement = (msg, args) => { 
+const divManagement = (msg, args) => {
     const setDivRoles = Fun.noop();
     const setDivRole = Fun.noop();
 
