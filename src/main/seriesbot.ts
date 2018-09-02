@@ -8,10 +8,11 @@
 import { Client } from 'discord.js';
 import Help from './Help';
 import Management from './Management';
+import key from '../../key';
 
 // set up discord client
 const client = new Client();
-const token = 'NDgyNDU4NjcxODM4Nzg5NjMz.DmFMxw.5bseRogeSuuJYM_X0tj7kWdS9JU';
+const token = key;
 // const botId = 'Oceanink Series Bot#8187';
 
 client.on('ready', () => {
