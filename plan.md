@@ -3,6 +3,7 @@
 ## Overview
 
 1. Match scheduling
+    1.1. Team management
 2. Stream Team organisation
 3. Score reporting
 4. Logging
@@ -58,3 +59,19 @@ Allows captains to submit their match times without admin oversight, and save ma
 
 - Bot will need to keep track of who it's talking to for certain commands, since they will require whole conversations, rather than just being singular commands. Need to work out how to do this.
 
+#### 1.1. Team Management
+
+- Captain roles must be assigned manually by admins
+- Captains can add/remove team roles themselves?
+    - A user can only ever have one team role at a time
+- Division roles are automatically given based on team role
+- Bot can return a list of all members of a team
+    - Only usable by admins and relevant captains?
+        - Team captain, other div captains, all captains?
+- Co-captain roles?
+
+**Requirements**
+
+- Bot must have a list of all teams roles
+- Bot needs a list of team-div assignments for automatic div roles
+- Lots of permissions
