@@ -1,163 +1,154 @@
-
 /*
     Various functions for managing the bot
 */
 
 // @ts-ignore
-import { Fun, Arr } from '@ephox/katamari';
+import { Arr } from '@ephox/katamari';
 import Globals from '../data/Globals.js';
-import Utils from './Utils.js';
+import Utils from '../util/Utils';
+import defaults from '../../defaults';
 
-const sendMsg = (msg, text) => msg.channel.send(text);
 const globals = () => Globals.getGlobals();
-
-const helpMsg = (msg, cmd) => sendMsg(msg, 'Invalid `manage ' + cmd + '` command. Use `!s help manage ' + cmd + '` to check usage.');
 
 const adminManagement = (msg, args) => {
     const setAdminRole = () => {
         // CHECK: number of args - 'set' and role name
         if (args.length !== 2) {
-            helpMsg(msg, 'admin set');
+            Utils.sendHelpMsg(msg, 'manage admin set');
             return;
         }
 
         // RESTRICTION: Can only be used by the server owner
         if (msg.member !== msg.guild.owner) {
-            sendMsg(msg, 'Admin role can only be seted by the owner of the server');
+            Utils.sendMsg(msg, 'Admin role can only be seted by the owner of the server');
             return;
         }
 
         // CHECK: role actually exists
         if (Utils.roleExistsByTag(msg.guild, args[1])) {
             globals().adminRole = args[1];
-            sendMsg(msg, 'Admin role is now ' + args[1]);
+            Utils.sendMsg(msg, 'Admin role is now ' + args[1]);
             return;
         }
 
-        helpMsg(msg, 'admin set');
+        Utils.sendHelpMsg(msg, 'manage admin set');
     };
 
     const checkAdminRole = () => {
         const adminRole = globals().adminRole;
-        adminRole === '' ? sendMsg(msg, 'No admin role has been set') : sendMsg(msg, 'Admin role is ' + adminRole);
+        adminRole === '' ? Utils.sendMsg(msg, 'No admin role has been set') : Utils.sendMsg(msg, 'Admin role is ' + adminRole);
     };
 
     switch (args[0]) {
         case 'set': setAdminRole(); break;
         case 'check': checkAdminRole(); break;
-        default: helpMsg(msg, 'admin');
+        default: Utils.sendHelpMsg(msg, 'manage admin');
     }
 };
 
 const teamManagement = (msg, args) => {
-    const passFailMessage = (xs, predXs, passMsg, failMsg) => {
-        const passFail = Arr.partition(xs, (_, i) => predXs[i]);
-        const passPlural = passFail.pass.length > 1 ? 's' : '';
-        const failPlural = passFail.fail.length > 1 ? 's' : '';
-        const passText = passFail.pass.length > 0 ? passMsg + passPlural + ": " + passFail.pass.join(', ') : '';
-        const failText = passFail.fail.length > 0 ? failMsg + failPlural + ": " + passFail.fail.join(', ') : '';
-        return passText + (passText !== '' && failText !== '' ? '\n' : '') + failText;
-    };
-
-    const addTeamRole = (roles, newRole) => {
-        // If a role exists and isn't a duplicate, add it to the list of team roles
-        if (Utils.roleExistsByTag(msg.guild, newRole) && !Arr.exists(roles, (role) => role === newRole)) {
-            roles.push(newRole);
-            return true;
-        }
-        return false;
-    };
-
-    const addTeamRoles = () => {
-        // Get names of roles that were added, and report them back as successes
-        // Keep any args that aren't team roles, and report those back as failures
-
-        const newRoles = args.slice(1);
-        if (newRoles.length === 0) {
-            helpMsg(msg, 'teams add');
-            return;
-        }
-
-        const existingRoles = globals().teamRoles
-
-        const wasAdded = Arr.map(newRoles, (newRole) => addTeamRole(existingRoles, newRole));
-        sendMsg(msg, passFailMessage(newRoles, wasAdded, 'Added team role', 'Invalid team role'));
-    };
-
-    const removeTeamRole = (roles, role) => {
-        const ind = Arr.indexOf(roles, role);
-        return ind.fold(() => false, (i) => {
-            roles.splice(i, 1);
-            return true;
-        });
-    };
-
-    const removeTeamRoles = () => {
-        const rolesToRemove = args.slice(1);
-        if (rolesToRemove.length === 0) {
-            helpMsg(msg, 'teams remove');
-            return;
-        }
-
-        // TODO: check valid role
-        const teamRoles = globals().teamRoles;
-        const wasRemoved = Arr.map(rolesToRemove, (role) => removeTeamRole(teamRoles, role));
-        sendMsg(msg, passFailMessage(rolesToRemove, wasRemoved, 'Removed team role', 'Invalid team role'));
-    };
-
-    const removeAllTeamRoles = () => {
-        // PREREQ: Confirm
-        // TODO
-        globals().teamRoles = [];
-        sendMsg(msg, 'All team roles have been removed');
-    };
-
-    const checkTeamRoles = () => {
-        // TODO: formatting?
-        const roles = globals().teamRoles;
-        roles.length > 0 ? sendMsg(msg, 'Team roles are: ' + roles.join(', ')) : sendMsg(msg, 'No team roles have been set');
-    };
-
+    // TODO: add a function to check no person in the server has more than 1 team role?
     switch (args[0]) {
-        case 'add': addTeamRoles(); break;
-        case 'remove': removeTeamRoles(); break;
-        case 'removeall': removeAllTeamRoles(); break;
-        case 'check': checkTeamRoles(); break;
-        default: helpMsg(msg, 'teams')
+        case 'add': Utils.addRoles(msg, args, 'manage', 'teamRoles', 'team'); break;
+        case 'remove': Utils.removeRoles(msg, args, 'manage', 'teamRoles', 'team'); break;
+        case 'removeAll': Utils.removeAllRoles(msg, 'teamRoles', 'team'); break;
+        case 'list': Utils.listRoles(msg, 'teamRoles', 'team'); break;
+        default: Utils.sendHelpMsg(msg, 'manage teams');
     }
 };
 
 const divManagement = (msg, args) => {
-    const setDivRoles = Fun.noop();
-    const setDivRole = Fun.noop();
+    switch (args[0]) {
+        case 'add': Utils.addRoles(msg, args, 'manage', 'divRoles', 'div'); break;
+        case 'remove': Utils.removeRoles(msg, args, 'manage', 'divRoles', 'div'); break;
+        case 'removeAll': Utils.removeAllRoles(msg, 'divRoles', 'div'); break;
+        case 'list': Utils.listRoles(msg, 'divRoles', 'div'); break;
+        default: Utils.sendHelpMsg(msg, 'manage divs');
+    }
+};
+
+const seriesManagement = (msg, args) => {
+
+    const setNumWeeks = (num) => {
+        // TODO: check num is a number
+        globals().numWeeks = parseInt(num);
+        Utils.sendMsg(msg, 'Set number of weeks in season to ' + parseInt(num));
+    };
+
+    const setStartDate = (format, date) => {
+        // TODO: check date is a valid date
+        // TODO: support other datetime formats (currently ISO 8601 and milliseconds only) and timezones (currently AEST)
+        const datetime = new Date(format === 'iso' ? date + '+10:00' : date);
+        globals().startDate = datetime.valueOf(); // stores as milliseconds since Jan 1, 1970
+        Utils.sendMsg(msg, 'Set start date to ' + datetime);
+    };
+
+    // TODO: make these get and set functions
+    switch (args[0]) {
+        case 'numWeeks': setNumWeeks(args[1]); break;
+        case 'startDate': setStartDate(args[1], args[2]); break;
+        default: Utils.sendHelpMsg(msg, 'manage series');
+    }
+};
+
+const weekManagement = (msg, args) => {
+    const makeMatch = (teamData) => {
+        // TODO: check team roles are registered
+        // TODO: check for duplicate matches
+        const teams = teamData.split(' ');
+        return {
+            teams,
+            datetime: null, // TODO: make these options!
+            datetimeBy: '', // TODO: make this an interface somewhere!
+            confirmed: false,
+            confirmedBy: ''
+        };
+    };
+
+    const setMatches = (week, rawMatches) => {
+        const matches = Arr.map(rawMatches.join(' ').split('- '), (teamData) => makeMatch(teamData.trim()));
+        globals().weeks[week] = matches;
+    };
 
     switch (args[0]) {
-        default: sendMsg(msg, 'Not implemented yet');
+        case 'matches': setMatches(args[1], args.slice(2)); break;
+        default: Utils.sendHelpMsg(msg, 'manage weeks');
     }
+};
+
+const quickInit = (msg) => {
+    adminManagement(msg, ['set', defaults.adminRole]);
+    teamManagement(msg, ['add'].concat(defaults.teamRoles));
+    divManagement(msg, ['add'].concat(defaults.divRoles));
+    seriesManagement(msg, ['numWeeks', defaults.numWeeks]);
+    seriesManagement(msg, ['startDate', 'ms', defaults.startDate]);
 };
 
 const manage = (msg, args) => {
     // RESTRICTION: Can only be used by admins and server owner
     const adminRole = globals().adminRole;
     const isAdmin = adminRole !== '' && Utils.hasRoleByTag(msg.member, adminRole);
-    if (msg.member !== msg.guild.owner || isAdmin) {
-        sendMsg(msg, 'Management commands can only be used by the server owner and admins.');
+    if (msg.member !== msg.guild.owner && !isAdmin) {
+        Utils.sendMsg(msg, 'Management commands can only be used by the server owner and admins.');
         return;
     }
 
     // CHECK: number of args - at least admin/teams/divs and branch arg
-    if (args.length < 2) {
+    if (args.length < 2 && args[0] !== 'quickinit') {
         // Not enough args for any of these functions, so return bad args message
-        sendMsg(msg, 'Not enough arguments for a management command. Use `!s help manage` to check usage.');
+        Utils.sendMsg(msg, 'Not enough arguments for a management command. Use `!s help manage` to check usage.');
         return;
     }
     const option = args[0];
     const childArgs = args.slice(1);
     switch (option) {
+        case 'quickinit': quickInit(msg); break;
         case 'admin': adminManagement(msg, childArgs); break;
         case 'teams': teamManagement(msg, childArgs); break;
         case 'divs': divManagement(msg, childArgs); break;
-        default: sendMsg(msg, 'Incorrect arguments');
+        case 'series': seriesManagement(msg, childArgs); break;
+        case 'weeks': weekManagement(msg, childArgs); break;
+        default: Utils.sendMsg(msg, 'Incorrect arguments');
     }
 };
 

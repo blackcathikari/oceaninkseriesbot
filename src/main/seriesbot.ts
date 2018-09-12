@@ -9,6 +9,7 @@ import { Client } from 'discord.js';
 import Help from './Help';
 import Management from './Management';
 import key from '../../key';
+import Scheduling from './Scheduling';
 
 // set up discord client
 const client = new Client();
@@ -31,6 +32,9 @@ client.on('message', (message) => {
                 break;
             case 'manage':
                 Management.manage(message, args.slice(1));
+                break;
+            case 'schedule':
+                Scheduling.schedule(message, args.slice(1));
                 break;
             default:
                 fallbackMessage(message);

@@ -31,9 +31,10 @@
 
 ## Features
 
-### 0. Bot Help
+### 0. Bot & Rules Help
 
 - Help command should be added for every other command
+- Help should include at least some of the rules - e.g. DC, scheduling, etc. - so it's easy to look up those sections
 
 ### 1. Match Scheduling
 
